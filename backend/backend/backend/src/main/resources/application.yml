@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: loanmanager-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/loanmanager_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=America/Bogota&allowPublicKeyRetrieval=true
+    username: root
+    password: Admin1234!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: LoanManagerPool
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  devtools:
+    restart:
+      enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+  error:
+    include-message: always
+    include-binding-errors: always
+
+logging:
+  level:
+    com.loanmanager: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.springframework.security: DEBUG
+
+jwt:
+  secret: loanmanager-secret-key-very-long-and-secure-for-jwt-signing-2025
+  expiration: 86400000
+  prefix: Bearer
+  header: Authorization
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui

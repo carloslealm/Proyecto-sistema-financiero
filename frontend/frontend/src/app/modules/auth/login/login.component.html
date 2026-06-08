@@ -1,0 +1,76 @@
+<!-- src/app/modules/auth/login/login.component.html -->
+<div class="login-wrapper d-flex align-items-center justify-content-center min-vh-100">
+  <div class="login-card card p-4" style="width: 420px;">
+
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <div class="brand-icon mb-3">
+        <span style="font-size: 2rem;">🏦</span>
+      </div>
+      <h4 class="fw-bold mb-1">LoanManager</h4>
+      <p class="text-muted small mb-0">Sistema de Gestión de Préstamos</p>
+    </div>
+
+    <!-- Error -->
+    <div class="alert alert-danger py-2 small" *ngIf="errorMsg">
+      {{ errorMsg }}
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label fw-medium">Correo electrónico</label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="admin@loanmanager.com"
+          [class.is-invalid]="email.invalid && email.touched">
+        <div class="invalid-feedback">
+          <span *ngIf="email.errors?.['required']">El email es obligatorio</span>
+          <span *ngIf="email.errors?.['email']">Ingresa un email válido</span>
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="mb-4">
+        <label class="form-label fw-medium">Contraseña</label>
+        <div class="input-group">
+          <input
+            [type]="showPass ? 'text' : 'password'"
+            class="form-control"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.is-invalid]="password.invalid && password.touched">
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="showPass = !showPass">
+            {{ showPass ? '🙈' : '👁️' }}
+          </button>
+          <div class="invalid-feedback">
+            La contraseña es obligatoria (mínimo 6 caracteres)
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-2"
+        [disabled]="loading">
+        <span *ngIf="!loading">Iniciar Sesión</span>
+        <span *ngIf="loading">
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Verificando...
+        </span>
+      </button>
+
+    </form>
+
+    <hr class="my-3">
+    <p class="text-center text-muted small mb-0">LoanManager v1.0 © 2025</p>
+  </div>
+</div>
