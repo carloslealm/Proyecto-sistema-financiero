@@ -1,0 +1,169 @@
+<div class="text-center py-5" *ngIf="loadingPerfil">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2 text-muted">Cargando perfil...</p>
+</div>
+
+<div *ngIf="!loadingPerfil && perfil">
+
+  <!-- Header -->
+  <div class="page-header mb-4">
+    <div>
+      <h4 class="mb-1 fw-bold">👤 Mi Perfil</h4>
+      <p class="text-muted mb-0">Gestiona tu información personal</p>
+    </div>
+  </div>
+
+  <div class="alert alert-danger"  *ngIf="error">{{ error }}</div>
+  <div class="alert alert-success" *ngIf="exitoso">✅ {{ exitoso }}</div>
+
+  <div class="row g-4">
+
+    <!-- Info del usuario -->
+    <div class="col-12 col-lg-4">
+      <div class="card border-0 shadow-sm text-center p-4">
+        <div class="avatar-lg mx-auto mb-3">
+          {{ getInicial(perfil.nombre, perfil.apellido) }}
+        </div>
+        <h5 class="fw-bold mb-1">{{ perfil.nombre }} {{ perfil.apellido }}</h5>
+        <p class="text-muted small mb-3">{{ perfil.email }}</p>
+
+        <!-- Roles -->
+        <div class="d-flex gap-2 justify-content-center flex-wrap mb-3">
+          <span *ngFor="let rol of perfil.roles"
+                class="badge"
+                [class]="rol === 'ADMIN' ? 'bg-danger' : 'bg-primary'">
+            {{ rol }}
+          </span>
+        </div>
+
+        <div class="info-mini">
+          <div class="info-mini-row">
+            <span class="text-muted small">Estado</span>
+            <span class="badge bg-success">Activo</span>
+          </div>
+          <div class="info-mini-row" *ngIf="perfil.ultimoAcceso">
+            <span class="text-muted small">Último acceso</span>
+            <span class="small">{{ perfil.ultimoAcceso | slice:0:10 }}</span>
+          </div>
+          <div class="info-mini-row">
+            <span class="text-muted small">Miembro desde</span>
+            <span class="small">{{ perfil.createdAt | slice:0:10 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formularios -->
+    <div class="col-12 col-lg-8">
+
+      <!-- Datos personales -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold mb-0">✏️ Datos Personales</h6>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="formDatos" (ngSubmit)="guardarDatos()">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Nombre *</label>
+                <input type="text" class="form-control"
+                       formControlName="nombre"
+                       [class.is-invalid]="formDatos.get('nombre')!.invalid && formDatos.get('nombre')!.touched">
+                <div class="invalid-feedback">Mínimo 2 caracteres</div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Apellido *</label>
+                <input type="text" class="form-control"
+                       formControlName="apellido"
+                       [class.is-invalid]="formDatos.get('apellido')!.invalid && formDatos.get('apellido')!.touched">
+                <div class="invalid-feedback">Mínimo 2 caracteres</div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Email</label>
+                <input type="email" class="form-control"
+                       [value]="perfil.email" disabled>
+                <small class="text-muted">El email no se puede cambiar</small>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Teléfono</label>
+                <input type="tel" class="form-control"
+                       formControlName="telefono"
+                       placeholder="3001234567">
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+              <button type="submit" class="btn btn-primary px-4"
+                      [disabled]="guardandoDatos">
+                <span *ngIf="guardandoDatos">
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Guardando...
+                </span>
+                <span *ngIf="!guardandoDatos">💾 Guardar cambios</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Cambiar contraseña -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold mb-0">🔐 Cambiar Contraseña</h6>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="formPassword" (ngSubmit)="cambiarPassword()">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-medium">Contraseña actual *</label>
+                <div class="input-group">
+                  <input [type]="showPassActual ? 'text' : 'password'"
+                         class="form-control"
+                         formControlName="passwordActual"
+                         [class.is-invalid]="formPassword.get('passwordActual')!.invalid && formPassword.get('passwordActual')!.touched">
+                  <button class="btn btn-outline-secondary" type="button"
+                          (click)="showPassActual = !showPassActual">
+                    {{ showPassActual ? '🙈' : '👁️' }}
+                  </button>
+                  <div class="invalid-feedback">Ingresa tu contraseña actual</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Nueva contraseña *</label>
+                <div class="input-group">
+                  <input [type]="showPassNuevo ? 'text' : 'password'"
+                         class="form-control"
+                         formControlName="passwordNuevo"
+                         placeholder="Mínimo 8 caracteres"
+                         [class.is-invalid]="formPassword.get('passwordNuevo')!.invalid && formPassword.get('passwordNuevo')!.touched">
+                  <button class="btn btn-outline-secondary" type="button"
+                          (click)="showPassNuevo = !showPassNuevo">
+                    {{ showPassNuevo ? '🙈' : '👁️' }}
+                  </button>
+                  <div class="invalid-feedback">Mínimo 8 caracteres</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-medium">Confirmar contraseña *</label>
+                <input type="password" class="form-control"
+                       formControlName="confirmar"
+                       [class.is-invalid]="passwordNoCoincide">
+                <div class="invalid-feedback">Las contraseñas no coinciden</div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+              <button type="submit" class="btn btn-warning px-4"
+                      [disabled]="guardandoPass">
+                <span *ngIf="guardandoPass">
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Cambiando...
+                </span>
+                <span *ngIf="!guardandoPass">🔐 Cambiar contraseña</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

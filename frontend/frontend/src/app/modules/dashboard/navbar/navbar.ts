@@ -25,8 +25,8 @@ export class NavbarComponent implements OnInit {
   }
  
   onLogout(): void {
-    this.authService.logout();
-  }
+  this.authService.logout();
+}
  
   get userInitials(): string {
     if (!this.currentUser) return 'U';

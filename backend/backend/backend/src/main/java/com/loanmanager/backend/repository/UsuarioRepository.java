@@ -37,4 +37,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("UPDATE Usuario u SET u.ultimoAcceso = :fecha WHERE u.id = :id")
     void actualizarUltimoAcceso(@Param("id") Long id,
                                  @Param("fecha") LocalDateTime fecha);
+
 }

@@ -23,6 +23,18 @@ spring:
       hibernate:
         format_sql: true
 
+  mail:                          # ← dentro de spring:
+    host: smtp.gmail.com
+    port: 587
+    username: 1234.carlosleal@gmail.com
+    password: vtpw ydwu spvh fhvl
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   devtools:
     restart:
       enabled: true
@@ -31,9 +43,6 @@ server:
   port: 8080
   servlet:
     context-path: /api/v1
-  error:
-    include-message: always
-    include-binding-errors: always
 
 logging:
   level:

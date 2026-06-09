@@ -18,8 +18,6 @@ export class ClientesListComponent implements OnInit {
   totalPaginas = 0;
   totalElementos = 0;
   tamanioPagina = 10;
-
-  // Búsqueda
   terminoBusqueda = '';
   buscando = false;
 
@@ -79,7 +77,7 @@ export class ClientesListComponent implements OnInit {
   }
 
   nuevo(): void {
-    this.router.navigate(['/clientes/nuevo']);
+  this.router.navigate(['/dashboard/clientes/nuevo']);
   }
 
   editar(id: number): void {

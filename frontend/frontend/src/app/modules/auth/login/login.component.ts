@@ -61,4 +61,11 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+      irARecuperar(): void {
+      this.router.navigate(['/auth/recuperar']);
+      }
+      
+      irARegistro(): void {
+        this.router.navigate(['/auth/registro']);
+      }
 }

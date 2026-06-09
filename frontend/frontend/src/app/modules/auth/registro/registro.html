@@ -1,0 +1,166 @@
+<div class="registro-wrapper d-flex align-items-center justify-content-center min-vh-100">
+  <div class="registro-card">
+
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <div class="brand-icon mb-3">🏦</div>
+      <h4 class="fw-bold mb-1">Crear cuenta</h4>
+      <p class="text-muted small">Únete a LoanManager como asesor de crédito</p>
+    </div>
+
+    <!-- Alertas -->
+    <div class="alert alert-danger py-2 small" *ngIf="error">{{ error }}</div>
+    <div class="alert alert-success py-2 small" *ngIf="exitoso">✅ {{ exitoso }}</div>
+
+    <!-- Formulario -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Nombre y Apellido -->
+      <div class="row g-3 mb-3">
+        <div class="col-6">
+          <label class="form-label small fw-medium">Nombre *</label>
+          <input type="text" class="form-control form-control-sm"
+                 formControlName="nombre"
+                 placeholder="Juan"
+                 [class.is-invalid]="nombre.invalid && nombre.touched">
+          <div class="invalid-feedback">Mínimo 2 caracteres</div>
+        </div>
+        <div class="col-6">
+          <label class="form-label small fw-medium">Apellido *</label>
+          <input type="text" class="form-control form-control-sm"
+                 formControlName="apellido"
+                 placeholder="García"
+                 [class.is-invalid]="apellido.invalid && apellido.touched">
+          <div class="invalid-feedback">Mínimo 2 caracteres</div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label small fw-medium">Correo electrónico *</label>
+        <input type="email" class="form-control form-control-sm"
+               formControlName="email"
+               placeholder="juan@ejemplo.com"
+               [class.is-invalid]="email.invalid && email.touched">
+        <div class="invalid-feedback">
+          <span *ngIf="email.errors?.['required']">El email es obligatorio</span>
+          <span *ngIf="email.errors?.['email']">Formato inválido</span>
+        </div>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="mb-3">
+        <label class="form-label small fw-medium">Teléfono *</label>
+        <input type="tel" class="form-control form-control-sm"
+               formControlName="telefono"
+               placeholder="3001234567"
+               [class.is-invalid]="telefono.invalid && telefono.touched">
+        <div class="invalid-feedback">7-15 dígitos sin espacios</div>
+      </div>
+
+      <!-- Rol -->
+      <div class="mb-3">
+        <label class="form-label small fw-medium">Rol en el sistema *</label>
+        <div class="rol-selector">
+          <div class="rol-option"
+               [class.selected]="form.get('rol')?.value === 'ASESOR'"
+               (click)="form.get('rol')?.setValue('ASESOR')">
+            <div class="rol-icon">👔</div>
+            <div>
+              <div class="rol-nombre">Asesor de Crédito</div>
+              <div class="rol-desc">Gestiona clientes y préstamos</div>
+            </div>
+          </div>
+        </div>
+        <small class="text-muted">
+          ℹ️ El rol ADMIN es asignado por un administrador existente
+        </small>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="mb-3">
+        <label class="form-label small fw-medium">Contraseña *</label>
+        <div class="input-group input-group-sm">
+          <input [type]="showPass ? 'text' : 'password'"
+                 class="form-control form-control-sm"
+                 formControlName="password"
+                 placeholder="Mínimo 8 caracteres"
+                 [class.is-invalid]="password.invalid && password.touched">
+          <button class="btn btn-outline-secondary btn-sm" type="button"
+                  (click)="showPass = !showPass">
+            {{ showPass ? '🙈' : '👁️' }}
+          </button>
+          <div class="invalid-feedback">
+            <span *ngIf="password.errors?.['required']">La contraseña es obligatoria</span>
+            <span *ngIf="password.errors?.['minlength']">Mínimo 8 caracteres</span>
+            <span *ngIf="password.errors?.['pattern']">
+              Debe tener mayúscula, número y símbolo (!@#$%^&*)
+            </span>
+          </div>
+        </div>
+        <!-- Indicador de fortaleza -->
+        <div class="password-strength mt-1" *ngIf="password.value">
+          <div class="strength-bar">
+            <div class="strength-fill"
+                 [style.width]="password.valid ? '100%' : password.value?.length > 5 ? '50%' : '25%'"
+                 [class]="password.valid ? 'strong' : password.value?.length > 5 ? 'medium' : 'weak'">
+            </div>
+          </div>
+          <small [class]="password.valid ? 'text-success' : 'text-warning'">
+            {{ password.valid ? '✅ Contraseña segura' : '⚠️ Sigue los requisitos' }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="mb-3">
+        <label class="form-label small fw-medium">Confirmar contraseña *</label>
+        <div class="input-group input-group-sm">
+          <input [type]="showPass2 ? 'text' : 'password'"
+                 class="form-control form-control-sm"
+                 formControlName="confirmarPassword"
+                 placeholder="Repite la contraseña"
+                 [class.is-invalid]="passwordNoCoincide">
+          <button class="btn btn-outline-secondary btn-sm" type="button"
+                  (click)="showPass2 = !showPass2">
+            {{ showPass2 ? '🙈' : '👁️' }}
+          </button>
+          <div class="invalid-feedback">Las contraseñas no coinciden</div>
+        </div>
+      </div>
+
+      <!-- Términos -->
+      <div class="mb-4">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input"
+                 formControlName="terminos" id="terminos"
+                 [class.is-invalid]="terminos.invalid && terminos.touched">
+          <label class="form-check-label small" for="terminos">
+            Acepto los <a href="#" class="text-primary">términos y condiciones</a>
+            del sistema LoanManager
+          </label>
+          <div class="invalid-feedback">Debes aceptar los términos</div>
+        </div>
+      </div>
+
+      <!-- Botón -->
+      <button type="submit" class="btn btn-primary w-100 py-2 mb-3"
+              [disabled]="loading">
+        <span *ngIf="!loading">🚀 Crear mi cuenta</span>
+        <span *ngIf="loading">
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Creando cuenta...
+        </span>
+      </button>
+
+      <div class="text-center">
+        <small class="text-muted">
+          ¿Ya tienes cuenta?
+          <a class="text-primary fw-medium" style="cursor:pointer"
+             (click)="irALogin()">Inicia sesión aquí</a>
+        </small>
+      </div>
+
+    </form>
+  </div>
+</div>

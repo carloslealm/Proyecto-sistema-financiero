@@ -1,0 +1,97 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+ 
+.avatar-sm {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+ 
+.table th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+}
+ 
+.table td { vertical-align: middle; }
+ 
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+ 
+.modal-box {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  width: 420px;
+  max-width: 90vw;
+}
+ 
+/* Formulario */
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+ 
+.roles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+ 
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+ 
+.rol-card {
+  border: 2px solid #e8ecf0;
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.2s;
+  cursor: pointer;
+ 
+  &.selected {
+    border-color: #667eea;
+    background: #f0f4ff;
+  }
+ 
+  .form-check { display: flex; gap: 12px; align-items: flex-start; }
+  .form-check-input { margin-top: 4px; cursor: pointer; }
+  .form-check-label { cursor: pointer; display: flex; gap: 12px; align-items: flex-start; }
+}
+ 
+.rol-icon { font-size: 24px; }
+.rol-info strong { font-size: 14px; }
+ 
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  &:hover:not(:disabled) { opacity: 0.9; }
+  &:disabled { opacity: 0.7; }
+}

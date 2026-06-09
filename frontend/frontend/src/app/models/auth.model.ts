@@ -41,3 +41,25 @@ export interface PageResponse<T> {
   first: boolean;
   last: boolean;
 }
+
+export interface Usuario {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono?: string;
+  activo: boolean;
+  roles: string[];
+  ultimoAcceso?: string;
+  createdAt: string;
+}
+
+export interface UsuarioRequest {
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono?: string;
+  password: string;
+  confirmarPassword: string;
+  roles: string[];
+}

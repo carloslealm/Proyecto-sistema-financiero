@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/loanmanager/backend/BackendApplication.java
 package com.loanmanager.backend;
 
 import org.springframework.boot.SpringApplication;

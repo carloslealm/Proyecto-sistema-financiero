@@ -1,0 +1,127 @@
+<div class="landing-wrapper">
+
+  <!-- Navbar público -->
+  <nav class="landing-nav">
+    <div class="brand">🏦 LoanManager</div>
+    <div class="nav-actions">
+      <button class="btn btn-outline-light btn-sm me-2" (click)="irALogin()">
+        Iniciar Sesión
+      </button>
+      <button class="btn btn-light btn-sm" (click)="irARegistro()">
+        Registrarse
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">✨ Sistema Financiero Profesional</div>
+      <h1 class="hero-title">
+        Gestiona préstamos con
+        <span class="highlight">inteligencia</span>
+      </h1>
+      <p class="hero-subtitle">
+        Plataforma completa para la gestión de créditos.
+        Desde la solicitud hasta el cobro, todo en un solo lugar.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-hero-primary" (click)="irALogin()">
+          Iniciar Sesión →
+        </button>
+        <button class="btn-hero-secondary" (click)="irARegistro()">
+          Crear cuenta
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="dashboard-preview">
+        <div class="preview-bar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="preview-url">loanmanager.app/dashboard</span>
+        </div>
+        <div class="preview-content">
+          <div class="preview-card">
+            <div class="preview-icon">💰</div>
+            <div>
+              <div class="preview-label">Cartera Total</div>
+              <div class="preview-value">$45.200.000</div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <div class="preview-icon">👥</div>
+            <div>
+              <div class="preview-label">Clientes</div>
+              <div class="preview-value">128</div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <div class="preview-icon">📈</div>
+            <div>
+              <div class="preview-label">Recaudado</div>
+              <div class="preview-value text-success">$8.750.000</div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <div class="preview-icon">⚠️</div>
+            <div>
+              <div class="preview-label">En Mora</div>
+              <div class="preview-value text-danger">3.2%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <h2 class="features-title">Todo lo que necesitas</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Seguridad JWT</h3>
+        <p>Autenticación con tokens seguros y control de acceso por roles ADMIN y ASESOR.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Dashboard en tiempo real</h3>
+        <p>KPIs financieros actualizados. Cartera, mora y recaudo de un vistazo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧮</div>
+        <h3>Amortización automática</h3>
+        <p>Sistema Francés, Alemán y Americano. Plan de pagos generado automáticamente.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🐳</div>
+        <h3>Deploy con Docker</h3>
+        <p>Un solo comando para levantar todo el sistema en cualquier servidor.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>¿Listo para empezar?</h2>
+    <p>Accede al sistema y gestiona tu cartera de créditos hoy.</p>
+    <div class="d-flex gap-3 justify-content-center mt-4">
+      <button class="btn-hero-primary" (click)="irALogin()">
+        Iniciar Sesión →
+      </button>
+      <button class="btn-hero-secondary" (click)="irARegistro()">
+        Crear cuenta
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <p>LoanManager v1.0 — Sistema de Gestión de Préstamos</p>
+    <p class="text-muted small">Java Spring Boot + Angular + MySQL + Docker</p>
+  </footer>
+
+</div>

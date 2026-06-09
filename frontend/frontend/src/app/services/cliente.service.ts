@@ -10,7 +10,7 @@ import { Cliente, ClienteRequest } from '../models/cliente.model';
 })
 export class ClienteService {
  
-  private readonly API = 'http://localhost:8080/api/v1/clientes';
+  private readonly API = `${environment.apiUrl}/clientes`;
  
   constructor(private http: HttpClient) {}
  

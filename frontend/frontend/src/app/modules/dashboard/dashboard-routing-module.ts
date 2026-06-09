@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout';
 import { DashboardHomeComponent } from './dashboard-home/dashboard-home';
+import { PerfilComponent } from './perfil/perfil';
 
 const routes: Routes = [
   {
@@ -9,6 +10,7 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: '', component: DashboardHomeComponent },
+      { path: 'perfil',  component: PerfilComponent },
       {
         path: 'clientes',
         loadChildren: () =>
@@ -18,6 +20,11 @@ const routes: Routes = [
         path: 'prestamos',
         loadChildren: () =>
           import('../prestamos/prestamos-module').then(m => m.PrestamosModule)
+      },
+      {
+        path: 'usuarios',
+        loadChildren: () =>
+          import('../usuarios/usuarios-module').then(m => m.UsuariosModule)
       }
     ]
   }

@@ -3,14 +3,15 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PageResponse } from '../models/auth.model';
 import { Prestamo, PrestamoRequest, Cuota, Dashboard } from '../models/prestamo.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PrestamoService {
 
-  private readonly BASE = 'http://localhost:8080/api/v1';
-  private readonly API  = `${this.BASE}/prestamos`;
+  private readonly BASE = environment.apiUrl;
+private readonly API  = `${environment.apiUrl}/prestamos`;
 
   constructor(private http: HttpClient) {}
 

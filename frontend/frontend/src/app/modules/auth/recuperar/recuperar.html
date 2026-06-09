@@ -1,0 +1,70 @@
+<div class="recuperar-wrapper d-flex align-items-center justify-content-center min-vh-100">
+  <div class="recuperar-card">
+
+    <!-- Estado: Formulario -->
+    <div *ngIf="!enviado">
+      <div class="text-center mb-4">
+        <div class="brand-icon mb-3">🔐</div>
+        <h4 class="fw-bold mb-1">Recuperar contraseña</h4>
+        <p class="text-muted small">
+          Ingresa tu email y te enviaremos una contraseña temporal
+        </p>
+      </div>
+
+      <div class="alert alert-danger py-2 small" *ngIf="error">{{ error }}</div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label class="form-label fw-medium">Correo electrónico</label>
+          <input type="email" class="form-control"
+                 formControlName="email"
+                 placeholder="tu@email.com"
+                 [class.is-invalid]="email.invalid && email.touched">
+          <div class="invalid-feedback">
+            <span *ngIf="email.errors?.['required']">El email es obligatorio</span>
+            <span *ngIf="email.errors?.['email']">Formato inválido</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 mb-3"
+                [disabled]="loading">
+          <span *ngIf="!loading">📧 Enviar instrucciones</span>
+          <span *ngIf="loading">
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Enviando...
+          </span>
+        </button>
+
+        <div class="text-center">
+          <small class="text-muted">
+            <a class="text-primary" style="cursor:pointer" (click)="irALogin()">
+              ← Volver al inicio de sesión
+            </a>
+          </small>
+        </div>
+      </form>
+    </div>
+
+    <!-- Estado: Email enviado -->
+    <div *ngIf="enviado" class="text-center">
+      <div class="success-icon mb-3">✅</div>
+      <h4 class="fw-bold mb-2">¡Revisa tu correo!</h4>
+      <p class="text-muted mb-4">
+        Si el email <strong>{{ form.value.email }}</strong> está registrado,
+        recibirás una contraseña temporal en los próximos minutos.
+      </p>
+      <div class="alert alert-info text-start small">
+        <strong>💡 Importante:</strong> Después de iniciar sesión con la
+        contraseña temporal, ve a <strong>Mi Perfil</strong> para cambiarla
+        por una contraseña segura.
+      </div>
+      <button class="btn btn-primary w-100 mt-3" (click)="irALogin()">
+        Ir a Iniciar Sesión →
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+/* src/app/modules/auth/recuperar/recuperar.component.scss */

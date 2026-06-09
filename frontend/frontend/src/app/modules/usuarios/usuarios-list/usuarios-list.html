@@ -1,0 +1,141 @@
+<div class="page-header mb-4">
+  <div>
+    <h4 class="mb-1 fw-bold">⚙️ Usuarios del Sistema</h4>
+    <p class="text-muted mb-0">{{ totalElementos }} usuarios registrados</p>
+  </div>
+  <button class="btn btn-primary" (click)="nuevo()">
+    + Nuevo Usuario
+  </button>
+</div>
+ 
+<div class="alert alert-success py-2" *ngIf="exitoso">✅ {{ exitoso }}</div>
+<div class="alert alert-danger  py-2" *ngIf="error">{{ error }}</div>
+ 
+<div class="text-center py-5" *ngIf="loading">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2 text-muted">Cargando usuarios...</p>
+</div>
+ 
+<div class="card border-0 shadow-sm" *ngIf="!loading">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th class="text-center">Roles</th>
+          <th class="text-center">Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+ 
+          <!-- Avatar + nombre -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar-sm">
+                {{ usuario.nombre?.charAt(0) }}{{ usuario.apellido?.charAt(0) }}
+              </div>
+              <div>
+                <p class="mb-0 fw-medium">{{ usuario.nombre }} {{ usuario.apellido }}</p>
+                <small class="text-muted">ID: {{ usuario.id }}</small>
+              </div>
+            </div>
+          </td>
+ 
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.telefono || '—' }}</td>
+ 
+          <!-- Roles con checkboxes -->
+          <td class="text-center">
+            <div class="d-flex gap-2 justify-content-center">
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input"
+                       [id]="'admin-' + usuario.id"
+                       [checked]="tieneRol(usuario, 'ADMIN')"
+                       (change)="cambiarRol(usuario, 'ADMIN')">
+                <label class="form-check-label small" [for]="'admin-' + usuario.id">
+                  Admin
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input"
+                       [id]="'asesor-' + usuario.id"
+                       [checked]="tieneRol(usuario, 'ASESOR')"
+                       (change)="cambiarRol(usuario, 'ASESOR')">
+                <label class="form-check-label small" [for]="'asesor-' + usuario.id">
+                  Asesor
+                </label>
+              </div>
+            </div>
+          </td>
+ 
+          <!-- Estado -->
+          <td class="text-center">
+            <span class="badge" [class]="usuario.activo ? 'bg-success' : 'bg-secondary'">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+ 
+          <!-- Acciones -->
+          <td class="text-center">
+            <button class="btn btn-sm"
+                    [class]="usuario.activo ? 'btn-outline-danger' : 'btn-outline-success'"
+                    (click)="confirmarCambioEstado(usuario)">
+              {{ usuario.activo ? '🚫 Desactivar' : '✅ Activar' }}
+            </button>
+          </td>
+ 
+        </tr>
+ 
+        <tr *ngIf="usuarios.length === 0">
+          <td colspan="6" class="text-center py-5 text-muted">
+            No hay usuarios registrados
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+ 
+  <!-- Paginación -->
+  <div class="card-footer bg-white d-flex justify-content-between align-items-center"
+       *ngIf="totalPaginas > 1">
+    <small class="text-muted">Página {{ paginaActual + 1 }} de {{ totalPaginas }}</small>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="paginaActual === 0">
+          <button class="page-link" (click)="irAPagina(paginaActual - 1)">‹</button>
+        </li>
+        <li class="page-item" *ngFor="let p of paginas" [class.active]="p === paginaActual">
+          <button class="page-link" (click)="irAPagina(p)">{{ p + 1 }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas - 1">
+          <button class="page-link" (click)="irAPagina(paginaActual + 1)">›</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+ 
+<!-- Modal confirmación -->
+<div class="modal-overlay" *ngIf="usuarioADesactivar" (click)="cancelar()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <h5 class="fw-bold mb-2">
+      {{ usuarioADesactivar.activo ? '⚠️ Desactivar usuario' : '✅ Activar usuario' }}
+    </h5>
+    <p class="text-muted mb-4">
+      ¿Deseas {{ usuarioADesactivar.activo ? 'desactivar' : 'activar' }} a
+      <strong>{{ usuarioADesactivar.nombre }} {{ usuarioADesactivar.apellido }}</strong>?
+    </p>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn btn-outline-secondary" (click)="cancelar()">Cancelar</button>
+      <button class="btn"
+              [class]="usuarioADesactivar.activo ? 'btn-danger' : 'btn-success'"
+              (click)="cambiarEstado()">
+        {{ usuarioADesactivar.activo ? 'Desactivar' : 'Activar' }}
+      </button>
+    </div>
+  </div>
+</div>

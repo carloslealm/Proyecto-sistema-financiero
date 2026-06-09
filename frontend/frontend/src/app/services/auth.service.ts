@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthResponse, LoginRequest, ApiResponse, RegistroRequest } from '../models/auth.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { AuthResponse, LoginRequest, ApiResponse, RegistroRequest } from '../mod
 export class AuthService {
 
   // URL hardcodeada temporalmente
-  private readonly API = 'http://localhost:8080/api/v1/auth';
+ private readonly API = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'lm_token';
   private readonly USER_KEY  = 'lm_user';
 
@@ -37,12 +38,24 @@ export class AuthService {
     );
   }
 
+  registro(request: RegistroRequest): Observable<ApiResponse<AuthResponse>> {
+   return this.http.post<ApiResponse<AuthResponse>>(
+     `${this.API}/registro`, request
+   ).pipe(
+     tap(response => {
+       if (response.success) {
+         this.guardarSesion(response.data);
+       }
+     })
+   );
+ }
+
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/auth/login']);
-  }
+  localStorage.removeItem('lm_token');
+  localStorage.removeItem('lm_user');
+  this.currentUserSubject.next(null);
+  this.router.navigate(['/']);
+}
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
@@ -82,4 +95,6 @@ export class AuthService {
     const user = localStorage.getItem(this.USER_KEY);
     return user ? JSON.parse(user) : null;
   }
+
+  
 }

@@ -6,18 +6,18 @@ import { LayoutComponent } from './layout/layout';
 import { NavbarComponent } from './navbar/navbar';
 import { SidebarComponent } from './sidebar/sidebar';
 import { DashboardHomeComponent } from './dashboard-home/dashboard-home';
+import { PerfilComponent } from './perfil/perfil';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [
     LayoutComponent,
     NavbarComponent,
     SidebarComponent,
-    DashboardHomeComponent
+    DashboardHomeComponent,
+    PerfilComponent,
   ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    DashboardRoutingModule
-  ]
+  imports: [CommonModule, RouterModule, DashboardRoutingModule, ReactiveFormsModule],
 })
 export class DashboardModule {}

@@ -1,4 +1,3 @@
-<!-- src/app/modules/auth/login/login.component.html -->
 <div class="login-wrapper d-flex align-items-center justify-content-center min-vh-100">
   <div class="login-card card p-4" style="width: 420px;">
 
@@ -56,10 +55,10 @@
         </div>
       </div>
 
-      <!-- Botón -->
+      <!-- Botón iniciar sesión -->
       <button
         type="submit"
-        class="btn btn-primary w-100 py-2"
+        class="btn btn-primary w-100 py-2 mb-3"
         [disabled]="loading">
         <span *ngIf="!loading">Iniciar Sesión</span>
         <span *ngIf="loading">
@@ -67,6 +66,23 @@
           Verificando...
         </span>
       </button>
+
+      <!-- ¿Olvidaste tu contraseña? -->
+      <div class="text-center mb-2">
+        <a class="text-primary small" style="cursor:pointer"
+           (click)="irARecuperar()">
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
+
+      <!-- ¿No tienes cuenta? -->
+      <div class="text-center">
+        <small class="text-muted">
+          ¿No tienes cuenta?
+          <a class="text-primary fw-medium" style="cursor:pointer"
+             (click)="irARegistro()">Regístrate aquí</a>
+        </small>
+      </div>
 
     </form>
 
