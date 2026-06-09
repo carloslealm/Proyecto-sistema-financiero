@@ -1,0 +1,105 @@
+.navbar-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #e8ecf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+ 
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+ 
+.brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+ 
+.btn-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+ 
+  &:hover { background: #f0f2f5; }
+}
+ 
+.hamburger {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #555;
+  border-radius: 2px;
+}
+ 
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+ 
+.role-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #e8f4fd;
+  color: #1976d2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+ 
+  &.admin {
+    background: #fce4ec;
+    color: #c62828;
+  }
+}
+ 
+.btn-avatar {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+ 
+  &:hover { background: #f0f2f5; }
+  &::after { color: #888; }
+}
+ 
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+ 
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}

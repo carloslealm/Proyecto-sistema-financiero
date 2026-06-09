@@ -200,64 +200,63 @@ public class PrestamoServiceImpl implements PrestamoService {
     }
  
     // ── DASHBOARD ─────────────────────────────────────────────
-    @Override
-    @Transactional(readOnly = true)
-    public DashboardResponseDTO obtenerDashboard() {
-        LocalDate hoy = LocalDate.now();
-        YearMonth mesActual = YearMonth.now();
- 
-        // Cartera total activa
-        List<Object[]> resumenEstados = prestamoRepository.resumenCarteraPorEstado();
- 
-        BigDecimal carteraTotal  = BigDecimal.ZERO;
-        BigDecimal carteraEnMora = BigDecimal.ZERO;
-        Map<String, Long> prestamosPorEstado = new LinkedHashMap<>();
-        long prestamosActivos = 0;
-        long prestamosEnMora  = 0;
- 
-        for (Object[] fila : resumenEstados) {
-            Prestamo.EstadoPrestamo estado = (Prestamo.EstadoPrestamo) fila[0];
-            long     count  = ((Number) fila[1]).longValue();
-            BigDecimal monto = (BigDecimal) fila[2];
- 
-            prestamosPorEstado.put(estado.name(), count);
- 
-            if (estado == Prestamo.EstadoPrestamo.AL_DIA
-                || estado == Prestamo.EstadoPrestamo.EN_MORA) {
-                carteraTotal = carteraTotal.add(monto);
-                prestamosActivos += count;
-            }
-            if (estado == Prestamo.EstadoPrestamo.EN_MORA) {
-                carteraEnMora = carteraEnMora.add(monto);
-                prestamosEnMora = count;
-            }
+   @Override
+@Transactional(readOnly = true)
+public DashboardResponseDTO obtenerDashboard() {
+    LocalDate hoy = LocalDate.now();
+    YearMonth mesActual = YearMonth.now();
+
+    List<Object[]> resumenEstados = prestamoRepository.resumenCarteraPorEstado();
+
+    BigDecimal carteraTotal  = BigDecimal.ZERO;
+    BigDecimal carteraEnMora = BigDecimal.ZERO;
+    Map<String, Long> prestamosPorEstado = new LinkedHashMap<>();
+    long prestamosActivos = 0;
+    long prestamosEnMora  = 0;
+
+    for (Object[] fila : resumenEstados) {
+        // El enum se convierte a String con name()
+        String estadoStr = ((Prestamo.EstadoPrestamo) fila[0]).name();
+        long   count     = ((Number) fila[1]).longValue();
+        BigDecimal monto = new BigDecimal(fila[2].toString());
+
+        prestamosPorEstado.put(estadoStr, count);
+
+        if (estadoStr.equals("AL_DIA") || estadoStr.equals("EN_MORA")) {
+            carteraTotal = carteraTotal.add(monto);
+            prestamosActivos += count;
         }
- 
-        BigDecimal porcentajeMora = carteraTotal.compareTo(BigDecimal.ZERO) > 0
-            ? carteraEnMora.divide(carteraTotal, 4, RoundingMode.HALF_UP)
-                           .multiply(BigDecimal.valueOf(100))
-                           .setScale(2, RoundingMode.HALF_UP)
-            : BigDecimal.ZERO;
- 
-        BigDecimal recaudado = pagoRepository.totalRecaudadoEnMes(
-            mesActual.getMonthValue(), mesActual.getYear()
-        );
- 
-        long cuotasVencidas = cuotaRepository.findCuotasVencidas(hoy).size();
-        long totalClientes  = clienteRepository.count();
- 
-        return DashboardResponseDTO.builder()
-            .carteraTotal(carteraTotal)
-            .carteraEnMora(carteraEnMora)
-            .recaudadoEsteMes(recaudado)
-            .porcentajeMora(porcentajeMora)
-            .totalClientes(totalClientes)
-            .totalPrestamosActivos(prestamosActivos)
-            .totalPrestamosEnMora(prestamosEnMora)
-            .cuotasVencidasHoy(cuotasVencidas)
-            .prestamosPorEstado(prestamosPorEstado)
-            .build();
+        if (estadoStr.equals("EN_MORA")) {
+            carteraEnMora = carteraEnMora.add(monto);
+            prestamosEnMora = count;
+        }
     }
+
+    BigDecimal porcentajeMora = carteraTotal.compareTo(BigDecimal.ZERO) > 0
+        ? carteraEnMora.divide(carteraTotal, 4, RoundingMode.HALF_UP)
+                       .multiply(BigDecimal.valueOf(100))
+                       .setScale(2, RoundingMode.HALF_UP)
+        : BigDecimal.ZERO;
+
+    BigDecimal recaudado = pagoRepository.totalRecaudadoEnMes(
+        mesActual.getMonthValue(), mesActual.getYear()
+    );
+
+    long cuotasVencidas = cuotaRepository.findCuotasVencidas(hoy).size();
+    long totalClientes  = clienteRepository.count();
+
+    return DashboardResponseDTO.builder()
+        .carteraTotal(carteraTotal)
+        .carteraEnMora(carteraEnMora)
+        .recaudadoEsteMes(recaudado != null ? recaudado : BigDecimal.ZERO)
+        .porcentajeMora(porcentajeMora)
+        .totalClientes(totalClientes)
+        .totalPrestamosActivos(prestamosActivos)
+        .totalPrestamosEnMora(prestamosEnMora)
+        .cuotasVencidasHoy(cuotasVencidas)
+        .prestamosPorEstado(prestamosPorEstado)
+        .build();
+}
  
     // ── JOB de detección de mora ──────────────────────────────
     // @Scheduled ejecuta este método automáticamente cada día.

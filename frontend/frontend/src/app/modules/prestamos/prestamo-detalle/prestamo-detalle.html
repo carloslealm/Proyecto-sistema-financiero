@@ -1,0 +1,199 @@
+<div class="text-center py-5" *ngIf="loading">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2 text-muted">Cargando préstamo...</p>
+</div>
+ 
+<div *ngIf="!loading && prestamo">
+ 
+  <!-- Header -->
+  <div class="page-header mb-4">
+    <div>
+      <h4 class="mb-1 fw-bold">
+        Préstamo #{{ prestamo.id }}
+        <span class="badge ms-2" [class]="getBadgeClass(prestamo.estado)">
+          {{ prestamo.estado }}
+        </span>
+      </h4>
+      <p class="text-muted mb-0">{{ prestamo.clienteNombre }}</p>
+    </div>
+    <button class="btn btn-outline-secondary" (click)="volver()">← Volver</button>
+  </div>
+ 
+  <!-- Alertas -->
+  <div class="alert alert-danger"  *ngIf="error">{{ error }}</div>
+  <div class="alert alert-success" *ngIf="exitoso">✅ {{ exitoso }}</div>
+ 
+  <!-- Acciones -->
+  <div class="card border-0 shadow-sm mb-4"
+       *ngIf="puedeAprobar || puedeRechazar || puedeDesembolsar">
+    <div class="card-body py-3 d-flex gap-2 flex-wrap">
+      <strong class="me-2 align-self-center">Acciones:</strong>
+ 
+      <button class="btn btn-success" *ngIf="puedeAprobar"
+              [disabled]="loadingAcc" (click)="aprobar()">
+        ✅ Aprobar
+      </button>
+ 
+      <button class="btn btn-primary" *ngIf="puedeDesembolsar"
+              [disabled]="loadingAcc" (click)="desembolsar()">
+        💸 Desembolsar y Generar Plan
+      </button>
+ 
+      <button class="btn btn-outline-danger" *ngIf="puedeRechazar"
+              [disabled]="loadingAcc"
+              (click)="mostrarRechazo = !mostrarRechazo">
+        ❌ Rechazar
+      </button>
+    </div>
+ 
+    <!-- Panel rechazo -->
+    <div class="card-body border-top pt-3" *ngIf="mostrarRechazo">
+      <label class="form-label fw-medium">Motivo del rechazo *</label>
+      <div class="input-group">
+        <input type="text" class="form-control"
+               [(ngModel)]="motivoRechazo"
+               placeholder="Describe el motivo...">
+        <button class="btn btn-danger" (click)="rechazar()"
+                [disabled]="!motivoRechazo.trim() || loadingAcc">
+          Confirmar rechazo
+        </button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Info del préstamo -->
+  <div class="row g-4 mb-4">
+ 
+    <div class="col-12 col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold mb-0">📋 Información del Crédito</h6>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Cliente</span>
+            <span class="info-value">{{ prestamo.clienteNombre }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Cédula</span>
+            <span class="info-value font-monospace">{{ prestamo.clienteCedula }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Asesor</span>
+            <span class="info-value">{{ prestamo.asesorNombre }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Sistema</span>
+            <span class="info-value">{{ prestamo.sistemaAmortizacion }}</span>
+          </div>
+          <div class="info-row" *ngIf="prestamo.observaciones">
+            <span class="info-label">Observaciones</span>
+            <span class="info-value">{{ prestamo.observaciones }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="col-12 col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold mb-0">💰 Condiciones Financieras</h6>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">Monto prestado</span>
+            <span class="info-value fw-bold text-primary">
+              {{ formatCurrency(prestamo.monto) }}
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Tasa mensual</span>
+            <span class="info-value">{{ (prestamo.tasaInteres * 100).toFixed(2) }}%</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Plazo</span>
+            <span class="info-value">{{ prestamo.plazoMeses }} meses</span>
+          </div>
+          <div class="info-row" *ngIf="prestamo.totalAPagar">
+            <span class="info-label">Total a pagar</span>
+            <span class="info-value">{{ formatCurrency(prestamo.totalAPagar) }}</span>
+          </div>
+          <div class="info-row" *ngIf="prestamo.totalInteres">
+            <span class="info-label">Total intereses</span>
+            <span class="info-value text-danger">
+              {{ formatCurrency(prestamo.totalInteres) }}
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Fecha solicitud</span>
+            <span class="info-value">{{ prestamo.fechaSolicitud }}</span>
+          </div>
+          <div class="info-row" *ngIf="prestamo.fechaDesembolso">
+            <span class="info-label">Fecha desembolso</span>
+            <span class="info-value">{{ prestamo.fechaDesembolso }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+ 
+  <!-- Plan de pagos -->
+  <div class="card border-0 shadow-sm" *ngIf="cuotas.length > 0">
+    <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between">
+      <h6 class="fw-bold mb-0">📅 Plan de Pagos</h6>
+      <div class="d-flex gap-3 small text-muted">
+        <span>Pagadas: <strong class="text-success">{{ prestamo.cuotasPagadas }}</strong></span>
+        <span>Pendientes: <strong>{{ prestamo.cuotasPendientes }}</strong></span>
+        <span>En mora: <strong class="text-danger">{{ prestamo.cuotasEnMora }}</strong></span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-sm mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="text-center">#</th>
+            <th>Vencimiento</th>
+            <th class="text-end">Capital</th>
+            <th class="text-end">Interés</th>
+            <th class="text-end">Total Cuota</th>
+            <th class="text-end">Saldo</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center">Mora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cuota of cuotas" [class]="getCuotaClass(cuota.estado)">
+            <td class="text-center">{{ cuota.numeroCuota }}</td>
+            <td>{{ cuota.fechaVencimiento }}</td>
+            <td class="text-end">{{ formatCurrency(cuota.capital) }}</td>
+            <td class="text-end">{{ formatCurrency(cuota.interes) }}</td>
+            <td class="text-end fw-bold">{{ formatCurrency(cuota.valorTotal) }}</td>
+            <td class="text-end">{{ formatCurrency(cuota.saldoCapital) }}</td>
+            <td class="text-center">
+              <span class="badge" [class]="getBadgeClass(cuota.estado)">
+                {{ cuota.estado }}
+              </span>
+            </td>
+            <td class="text-center">
+              <span class="text-danger small" *ngIf="cuota.diasMora > 0">
+                {{ cuota.diasMora }} días
+              </span>
+              <span class="text-muted small" *ngIf="cuota.diasMora === 0">—</span>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="table-light fw-bold">
+          <tr>
+            <td colspan="4" class="text-end">Saldo pendiente:</td>
+            <td class="text-end text-primary">
+              {{ formatCurrency(prestamo.saldoPendiente) }}
+            </td>
+            <td colspan="3"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+ 
+</div>

@@ -35,11 +35,8 @@ export class JwtInterceptor implements HttpInterceptor {
  
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Si el servidor responde 401, el token expiró o es inválido.
-        // Redirigimos al login automáticamente.
         if (error.status === 401) {
           this.authService.logout();
-          this.router.navigate(['/auth/login']);
         }
         return throwError(() => error);
       })

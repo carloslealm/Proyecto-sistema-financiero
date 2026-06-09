@@ -1,0 +1,96 @@
+# ============================================================
+#  LoanManager — Docker Compose
+#  Levanta todo el sistema con un solo comando:
+#    docker compose up -d
+# ============================================================
+
+version: '3.8'
+
+services:
+
+  # ── MySQL ─────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: loanmanager-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: RootPass2025!
+      MYSQL_DATABASE: loanmanager_db
+      MYSQL_USER: loanmanager
+      MYSQL_PASSWORD: LoanManager2025!
+
+    ports:
+      # host:contenedor — expone MySQL en tu laptop para Workbench
+      - "3307:3306"
+
+    volumes:
+      # Volume nombrado: los datos persisten aunque el contenedor se borre
+      - mysql_data:/var/lib/mysql
+      # Script de inicialización: se ejecuta la primera vez que arranca
+      - ./database/loanmanager_database_v2.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - loanmanager-network
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "loanmanager", "-pLoanManager2025!"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
+  # ── Backend Spring Boot ───────────────────────────────────
+  backend:
+    build:
+      context: ./backend/backend/backend
+      dockerfile: Dockerfile
+    container_name: loanmanager-backend
+    restart: unless-stopped
+
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_USERNAME: loanmanager
+      DB_PASSWORD: LoanManager2025!
+      JWT_SECRET: loanmanager-secret-key-very-long-and-secure-for-jwt-signing-2025
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - loanmanager-network
+
+
+  # ── Frontend Angular ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend/frontend
+      dockerfile: Dockerfile
+    container_name: loanmanager-frontend
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - backend
+
+    networks:
+      - loanmanager-network
+
+
+# ── Volumes ───────────────────────────────────────────────
+volumes:
+  mysql_data:
+    driver: local
+
+
+# ── Networks ──────────────────────────────────────────────
+networks:
+  loanmanager-network:
+    driver: bridge

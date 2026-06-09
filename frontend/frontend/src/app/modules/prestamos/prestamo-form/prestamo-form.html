@@ -1,0 +1,172 @@
+<div class="page-header mb-4">
+  <div>
+    <h4 class="mb-1 fw-bold">➕ Nueva Solicitud de Préstamo</h4>
+    <p class="text-muted mb-0">Registra una solicitud de crédito</p>
+  </div>
+  <button class="btn btn-outline-secondary" (click)="cancelar()">
+    ← Volver
+  </button>
+</div>
+ 
+<div class="alert alert-danger"  *ngIf="error">{{ error }}</div>
+<div class="alert alert-success" *ngIf="exitoso">✅ {{ exitoso }}</div>
+ 
+<div class="row g-4">
+ 
+  <!-- Formulario -->
+  <div class="col-12 col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <form [formGroup]="form" (ngSubmit)="guardar()">
+ 
+          <h6 class="section-title">Datos del Crédito</h6>
+          <div class="row g-3 mb-4">
+ 
+            <div class="col-12">
+              <label class="form-label fw-medium">Cliente *</label>
+              <select class="form-select"
+                      formControlName="clienteId"
+                      [class.is-invalid]="clienteId.invalid && clienteId.touched">
+                <option value="">Selecciona un cliente...</option>
+                <option *ngFor="let c of clientes" [value]="c.id">
+                  {{ c.nombreCompleto }} — {{ c.cedula }}
+                </option>
+              </select>
+              <div class="invalid-feedback">Selecciona un cliente</div>
+            </div>
+ 
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-medium">Monto *</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control"
+                       formControlName="monto"
+                       placeholder="Ej: 5000000"
+                       [class.is-invalid]="monto.invalid && monto.touched">
+              </div>
+              <div class="invalid-feedback">Monto mínimo $100,000</div>
+            </div>
+ 
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-medium">Plazo (meses) *</label>
+              <input type="number" class="form-control"
+                     formControlName="plazoMeses"
+                     placeholder="Ej: 12"
+                     min="1" max="120"
+                     [class.is-invalid]="plazoMeses.invalid && plazoMeses.touched">
+              <div class="invalid-feedback">Entre 1 y 120 meses</div>
+            </div>
+ 
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-medium">Tasa de Interés Mensual *</label>
+              <div class="input-group">
+                <input type="number" class="form-control"
+                       formControlName="tasaInteres"
+                       step="0.0001"
+                       placeholder="Ej: 0.0245"
+                       [class.is-invalid]="tasaInteres.invalid && tasaInteres.touched">
+                <span class="input-group-text">
+                  {{ (form.get('tasaInteres')?.value * 100).toFixed(2) }}%
+                </span>
+              </div>
+              <small class="text-muted">Ejemplo: 0.0245 = 2.45% mensual</small>
+            </div>
+ 
+            <div class="col-12 col-md-6">
+              <label class="form-label fw-medium">Sistema de Amortización</label>
+              <select class="form-select" formControlName="sistemaAmortizacion">
+                <option value="FRANCES">Francés (cuota fija)</option>
+                <option value="ALEMAN">Alemán (capital fijo)</option>
+                <option value="AMERICANO">Americano (solo intereses)</option>
+              </select>
+            </div>
+ 
+            <div class="col-12">
+              <label class="form-label fw-medium">Observaciones</label>
+              <textarea class="form-control" formControlName="observaciones"
+                        rows="3" placeholder="Notas adicionales..."></textarea>
+            </div>
+ 
+          </div>
+ 
+          <div class="d-flex gap-2 justify-content-end pt-2 border-top">
+            <button type="button" class="btn btn-outline-secondary"
+                    (click)="cancelar()">Cancelar</button>
+            <button type="submit" class="btn btn-primary px-4"
+                    [disabled]="guardando">
+              <span *ngIf="guardando">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Solicitando...
+              </span>
+              <span *ngIf="!guardando">📋 Solicitar Préstamo</span>
+            </button>
+          </div>
+ 
+        </form>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Panel de simulación -->
+  <div class="col-12 col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-0 pt-4 pb-0">
+        <h6 class="fw-bold mb-0">🧮 Simulación</h6>
+      </div>
+      <div class="card-body">
+ 
+        <div class="sim-row">
+          <span class="sim-label">Monto solicitado</span>
+          <span class="sim-value">{{ formatCurrency(form.get('monto')?.value || 0) }}</span>
+        </div>
+ 
+        <div class="sim-row">
+          <span class="sim-label">Plazo</span>
+          <span class="sim-value">{{ form.get('plazoMeses')?.value || 0 }} meses</span>
+        </div>
+ 
+        <div class="sim-row">
+          <span class="sim-label">Tasa mensual</span>
+          <span class="sim-value">
+            {{ ((form.get('tasaInteres')?.value || 0) * 100).toFixed(2) }}%
+          </span>
+        </div>
+ 
+        <hr>
+ 
+        <div class="sim-row highlight">
+          <span class="sim-label fw-bold">Cuota estimada</span>
+          <span class="sim-value text-primary fw-bold fs-5">
+            {{ formatCurrency(cuotaEstimada) }}
+          </span>
+        </div>
+ 
+        <div class="sim-row">
+          <span class="sim-label">Total a pagar</span>
+          <span class="sim-value">
+            {{ formatCurrency(cuotaEstimada * (form.get('plazoMeses')?.value || 0)) }}
+          </span>
+        </div>
+ 
+        <div class="sim-row">
+          <span class="sim-label">Total intereses</span>
+          <span class="sim-value text-danger">
+            {{ formatCurrency(
+                (cuotaEstimada * (form.get('plazoMeses')?.value || 0)) -
+                (form.get('monto')?.value || 0)
+               ) }}
+          </span>
+        </div>
+ 
+        <div class="mt-3 p-3 bg-light rounded">
+          <small class="text-muted">
+            📌 Esta es una simulación. Los valores exactos se calculan
+            al momento del desembolso.
+          </small>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+ 
+</div>

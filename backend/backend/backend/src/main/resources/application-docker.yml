@@ -1,0 +1,31 @@
+# ============================================================
+#  LoanManager — Configuración para entorno Docker
+#  Archivo: src/main/resources/application-docker.yml
+#
+#  Este perfil sobreescribe application.yml cuando
+#  SPRING_PROFILES_ACTIVE=docker
+# ============================================================
+
+spring:
+  datasource:
+    # En Docker, "mysql" es el nombre del servicio en docker-compose.
+    # Docker Compose crea una red interna donde los contenedores
+    # se reconocen por su nombre de servicio.
+    url: jdbc:mysql://mysql:3306/loanmanager_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=America/Bogota&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:loanmanager}
+    password: ${DB_PASSWORD:LoanManager2025!}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  devtools:
+    restart:
+      enabled: false
+
+logging:
+  level:
+    com.loanmanager: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.security: WARN

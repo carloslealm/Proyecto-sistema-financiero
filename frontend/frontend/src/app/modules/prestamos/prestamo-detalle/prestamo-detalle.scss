@@ -1,0 +1,29 @@
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+  gap: 12px;
+  &:last-child { border-bottom: none; }
+}
+ 
+.info-label {
+  font-size: 12px;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-width: 120px;
+}
+ 
+.info-value {
+  font-size: 14px;
+  text-align: right;
+}
+ 
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  &:hover:not(:disabled) { opacity: 0.9; }
+}

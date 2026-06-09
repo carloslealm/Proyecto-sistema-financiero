@@ -7,8 +7,7 @@ const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () =>
-      import('./modules/auth/auth.module')
-        .then(m => m.AuthModule)
+      import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
   {
     path: 'dashboard',
@@ -16,20 +15,6 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/dashboard/dashboard-module')
         .then(m => m.DashboardModule)
-  },
-  {
-    path: 'clientes',
-    canActivate: [AuthGuard],
-    loadChildren: () =>
-      import('./modules/clientes/clientes-module')
-        .then(m => m.ClientesModule)
-  },
-  {
-    path: 'prestamos',
-    canActivate: [AuthGuard],
-    loadChildren: () =>
-      import('./modules/prestamos/prestamos-module')
-        .then(m => m.PrestamosModule)
   },
   { path: '**', redirectTo: 'dashboard' }
 ];

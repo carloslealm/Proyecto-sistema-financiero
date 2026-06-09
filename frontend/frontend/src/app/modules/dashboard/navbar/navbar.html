@@ -1,0 +1,50 @@
+<nav class="navbar-top">
+  <div class="navbar-left">
+    <button class="btn-toggle" (click)="onToggleSidebar()">
+      <span class="hamburger"></span>
+      <span class="hamburger"></span>
+      <span class="hamburger"></span>
+    </button>
+    <span class="brand-name">🏦 LoanManager</span>
+  </div>
+ 
+  <div class="navbar-right">
+    <!-- Badge de rol -->
+    <span class="role-badge" [class.admin]="isAdmin">
+      {{ isAdmin ? 'Admin' : 'Asesor' }}
+    </span>
+ 
+    <!-- Avatar con dropdown -->
+    <div class="user-dropdown dropdown">
+      <button class="btn-avatar dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <div class="avatar">{{ userInitials }}</div>
+        <span class="user-name d-none d-md-inline">
+          {{ currentUser?.nombre }} {{ currentUser?.apellido }}
+        </span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <div class="dropdown-header">
+            <strong>{{ currentUser?.nombre }} {{ currentUser?.apellido }}</strong>
+            <small class="d-block text-muted">{{ currentUser?.email }}</small>
+          </div>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item" routerLink="/perfil">
+            👤 Mi Perfil
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button class="dropdown-item text-danger" (click)="onLogout()">
+            🚪 Cerrar Sesión
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+ 

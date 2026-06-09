@@ -1,0 +1,49 @@
+# ============================================================
+#  .gitignore — LoanManager
+# ============================================================
+
+# ── Java / Maven ──────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# ── Spring Boot ───────────────────────────────────────────
+application-local.yml
+application-prod.yml
+
+# ── Angular / Node ────────────────────────────────────────
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+yarn-error.log
+
+# ── IDEs ──────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ── Docker ────────────────────────────────────────────────
+.env
+.env.local
+
+# ── OS ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Secretos — NUNCA subir al repositorio ─────────────────
+*.pem
+*.key
+*.p12
+secrets/

@@ -25,11 +25,11 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
  
     // Consulta para el dashboard: cartera total por estado
     @Query("""
-        SELECT p.estado, COUNT(p), SUM(p.monto)
-        FROM Prestamo p
-        GROUP BY p.estado
-        """)
-    List<Object[]> resumenCarteraPorEstado();
+    SELECT p.estado, COUNT(p), COALESCE(SUM(p.monto), 0)
+    FROM Prestamo p
+    GROUP BY p.estado
+    """)
+List<Object[]> resumenCarteraPorEstado();
  
     // Top asesores por monto desembolsado — responde el reto de la Fase 2
     @Query("""

@@ -1,0 +1,162 @@
+<div class="page-header mb-4">
+  <div>
+    <h4 class="mb-1 fw-bold">👥 Clientes</h4>
+    <p class="text-muted mb-0">{{ totalElementos }} clientes registrados</p>
+  </div>
+  <button class="btn btn-primary" (click)="nuevo()">
+    + Nuevo Cliente
+  </button>
+</div>
+
+<!-- Buscador -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body py-3">
+    <div class="row g-2 align-items-center">
+      <div class="col-12 col-md-8">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">🔍</span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            placeholder="Buscar por nombre, cédula o email..."
+            [(ngModel)]="terminoBusqueda"
+            (keyup.enter)="buscar()">
+          <button class="btn btn-outline-secondary"
+                  *ngIf="terminoBusqueda"
+                  (click)="limpiarBusqueda()">✕</button>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <button class="btn btn-primary w-100" (click)="buscar()">
+          Buscar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+<!-- Loading -->
+<div class="text-center py-5" *ngIf="loading">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2 text-muted">Cargando clientes...</p>
+</div>
+
+<!-- Tabla -->
+<div class="card border-0 shadow-sm" *ngIf="!loading">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Cliente</th>
+          <th>Cédula</th>
+          <th>Contacto</th>
+          <th>Ciudad</th>
+          <th class="text-end">Ingreso Mensual</th>
+          <th class="text-center">Préstamos</th>
+          <th class="text-center">Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientes">
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar-sm">
+                {{ cliente.nombre.charAt(0) }}{{ cliente.apellido.charAt(0) }}
+              </div>
+              <div>
+                <p class="mb-0 fw-medium">{{ cliente.nombreCompleto }}</p>
+                <small class="text-muted">{{ cliente.email || 'Sin email' }}</small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="font-monospace">{{ cliente.cedula }}</span>
+          </td>
+          <td>{{ cliente.telefono }}</td>
+          <td>{{ cliente.ciudad || '—' }}</td>
+          <td class="text-end">
+            {{ cliente.ingresoMensual ? formatCurrency(cliente.ingresoMensual) : '—' }}
+          </td>
+          <td class="text-center">
+            <span class="badge bg-primary rounded-pill">
+              {{ cliente.totalPrestamos }}
+            </span>
+          </td>
+          <td class="text-center">
+            <span class="badge"
+                  [class]="cliente.activo ? 'bg-success' : 'bg-secondary'">
+              {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="text-center">
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-primary"
+                      (click)="editar(cliente.id)"
+                      title="Editar">✏️</button>
+              <button class="btn btn-outline-danger"
+                      (click)="confirmarEliminar(cliente)"
+                      title="Desactivar"
+                      *ngIf="cliente.activo">🗑️</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Sin resultados -->
+        <tr *ngIf="clientes.length === 0">
+          <td colspan="8" class="text-center py-5 text-muted">
+            <p class="mb-1">No se encontraron clientes</p>
+            <small>Intenta con otro término de búsqueda</small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="card-footer bg-white d-flex justify-content-between align-items-center"
+       *ngIf="totalPaginas > 1">
+    <small class="text-muted">
+      Página {{ paginaActual + 1 }} de {{ totalPaginas }}
+      ({{ totalElementos }} registros)
+    </small>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="paginaActual === 0">
+          <button class="page-link" (click)="irAPagina(paginaActual - 1)">‹</button>
+        </li>
+        <li class="page-item"
+            *ngFor="let p of paginas"
+            [class.active]="p === paginaActual">
+          <button class="page-link" (click)="irAPagina(p)">{{ p + 1 }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas - 1">
+          <button class="page-link" (click)="irAPagina(paginaActual + 1)">›</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- Modal confirmación eliminar -->
+<div class="modal-overlay" *ngIf="clienteAEliminar" (click)="cancelarEliminar()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <h5 class="fw-bold mb-2">⚠️ Confirmar desactivación</h5>
+    <p class="text-muted mb-4">
+      ¿Deseas desactivar al cliente
+      <strong>{{ clienteAEliminar.nombreCompleto }}</strong>?
+      Esta acción no borra los datos históricos.
+    </p>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn btn-outline-secondary" (click)="cancelarEliminar()">
+        Cancelar
+      </button>
+      <button class="btn btn-danger" (click)="eliminar()">
+        Desactivar
+      </button>
+    </div>
+  </div>
+</div>

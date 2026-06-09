@@ -1,0 +1,143 @@
+
+<div class="text-center py-5" *ngIf="loading">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2 text-muted">Cargando dashboard...</p>
+</div>
+
+<div class="alert alert-danger" *ngIf="error && !loading">
+  {{ error }}
+  <button class="btn btn-sm btn-outline-danger ms-2" (click)="cargarDashboard()">
+    Reintentar
+  </button>
+</div>
+
+<div *ngIf="!loading">
+
+  <div class="page-header mb-4">
+    <div>
+      <h4 class="mb-1 fw-bold">Dashboard</h4>
+      <p class="text-muted mb-0">Resumen general de la cartera</p>
+    </div>
+    <button class="btn btn-outline-primary btn-sm" (click)="cargarDashboard()">
+      🔄 Actualizar
+    </button>
+  </div>
+
+  <div class="row g-3 mb-4">
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#e8f5e9; color:#2e7d32">💰</div>
+        <div class="kpi-body">
+          <p class="kpi-label">Cartera Total</p>
+          <h3 class="kpi-value">{{ formatCurrency(dashboard.carteraTotal) }}</h3>
+          <small class="text-muted">{{ dashboard.totalPrestamosActivos }} préstamos activos</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#ffebee; color:#c62828">⚠️</div>
+        <div class="kpi-body">
+          <p class="kpi-label">Cartera en Mora</p>
+          <h3 class="kpi-value text-danger">{{ formatCurrency(dashboard.carteraEnMora) }}</h3>
+          <small class="text-danger">{{ dashboard.porcentajeMora }}% de mora</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#e3f2fd; color:#1565c0">📈</div>
+        <div class="kpi-body">
+          <p class="kpi-label">Recaudado este mes</p>
+          <h3 class="kpi-value text-primary">{{ formatCurrency(dashboard.recaudadoEsteMes) }}</h3>
+          <small class="text-muted">Pagos recibidos</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:#f3e5f5; color:#6a1b9a">👥</div>
+        <div class="kpi-body">
+          <p class="kpi-label">Total Clientes</p>
+          <h3 class="kpi-value">{{ dashboard.totalClientes }}</h3>
+          <small class="text-muted">{{ dashboard.cuotasVencidasHoy }} cuotas vencidas hoy</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row g-3">
+
+    <div class="col-12 col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold mb-0">Distribución de Cartera por Estado</h6>
+        </div>
+        <div class="card-body">
+          <div *ngFor="let item of dashboard.prestamosPorEstado | keyvalue"
+               class="estado-row mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="estado-label">{{ item.key }}</span>
+              <span class="fw-bold">{{ item.value }}</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar"
+                   [class]="item.key === 'EN_MORA' ? 'bg-danger' :
+                             item.key === 'AL_DIA' ? 'bg-success' :
+                             item.key === 'SOLICITADO' ? 'bg-warning' : 'bg-info'"
+                   [style.width.%]="dashboard.totalPrestamosActivos > 0
+                     ? (item.value / dashboard.totalPrestamosActivos) * 100
+                     : 0">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold mb-0">⚠️ Alertas del Sistema</h6>
+        </div>
+        <div class="card-body">
+
+          <div class="alert-item" *ngIf="dashboard.cuotasVencidasHoy > 0">
+            <div class="alert-dot bg-danger"></div>
+            <div>
+              <strong>{{ dashboard.cuotasVencidasHoy }} cuotas vencidas hoy</strong>
+              <p class="mb-0 small text-muted">Requieren atención inmediata</p>
+            </div>
+          </div>
+
+          <div class="alert-item" *ngIf="dashboard.totalPrestamosEnMora > 0">
+            <div class="alert-dot bg-warning"></div>
+            <div>
+              <strong>{{ dashboard.totalPrestamosEnMora }} préstamos en mora</strong>
+              <p class="mb-0 small text-muted">
+                {{ formatCurrency(dashboard.carteraEnMora) }} en riesgo
+              </p>
+            </div>
+          </div>
+
+          <div class="alert-item"
+               *ngIf="dashboard.cuotasVencidasHoy === 0 && dashboard.totalPrestamosEnMora === 0">
+            <div class="alert-dot bg-success"></div>
+            <div>
+              <strong>Cartera saludable</strong>
+              <p class="mb-0 small text-muted">Sin alertas pendientes</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

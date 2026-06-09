@@ -1,0 +1,21 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+ 
+.clickable-row { cursor: pointer; }
+.clickable-row:hover { background: #f0f4ff !important; }
+ 
+.font-monospace {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+ 
+.table th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+}
